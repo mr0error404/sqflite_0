@@ -13,7 +13,7 @@ class SqlDb{
   intialDb()async{
     String databasepath = await getDatabasesPath();
     String path = join(databasepath , 'nots.db');
-    Database mydb = await openDatabase(path , onCreate: _onCreate , version: 1,  onUpgrade: _onUpgrade);
+    Database mydb = await openDatabase(path , onCreate: _onCreate , version: 2,  onUpgrade: _onUpgrade);
     return mydb;
   }
   _onCreate (Database db , int version)async{
@@ -46,6 +46,6 @@ class SqlDb{
     return response;
   }// DELETE
   _onUpgrade(Database db, int oldverstion, int newverstion){
-
+    print("onUpgrade ====++++");
   }
 }
