@@ -10,6 +10,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   SqlDb sqlDb = SqlDb();
+  Future<List<Map>> showData()async{
+    List<Map> response = await sqlDb.showData("SELECT * FROM Notes");
+    return response;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +22,34 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: [
-          Center(
+          // MaterialButton(onPressed: ()async{
+          //   await sqlDb.mydeleteDatabase();
+          // },child: Text("Delete Database"),),
+          FutureBuilder(
+              future: showData(),
+              builder: (BuildContext context ,AsyncSnapshot<List<Map>> snapshot) {
+            if (snapshot.hasData){
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context , i){
+                    return Card(
+                      child: ListTile(
+                        title: Text("${snapshot.data![i]}"),
+                      ),
+                    );
+              });
+            }
+            return Center(child: CircularProgressIndicator(),);
+          } ),
+        ],
+      ),
+    );
+  }
+}
+/*
+* Center(
             child: MaterialButton(
               color: Colors.red,
               textColor: Colors.white,
@@ -61,9 +92,4 @@ class _HomeState extends State<Home> {
               },
               child: Text('Delete Data'),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+          ),*/

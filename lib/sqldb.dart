@@ -13,13 +13,14 @@ class SqlDb{
   intialDb()async{
     String databasepath = await getDatabasesPath();
     String path = join(databasepath , 'nots.db');
-    Database mydb = await openDatabase(path , onCreate: _onCreate , version: 2,  onUpgrade: _onUpgrade);
+    Database mydb = await openDatabase(path , onCreate: _onCreate , version: 5,  onUpgrade: _onUpgrade);
     return mydb;
   }
   _onCreate (Database db , int version)async{
     await db.execute('''
     CREATE TABLE "Notes"(
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+    "title" TEXT NOT NULL,
     "note" TEXT NOT NULL 
     )
     ''');
@@ -45,7 +46,13 @@ class SqlDb{
     int response = await mydb!.rawDelete(sql);
     return response;
   }// DELETE
-  _onUpgrade(Database db, int oldverstion, int newverstion){
+  _onUpgrade(Database db, int oldverstion, int newverstion)async{
     print("onUpgrade ====++++");
+    // await db.execute("ALTER TABLE Notes ADD COLUMN color TEXT");
+  }
+  mydeleteDatabase()async{
+    String databasepath = await getDatabasesPath();
+    String path = join(databasepath , 'nots.db');
+    return deleteDatabase(path);
   }
 }
