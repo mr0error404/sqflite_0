@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite_0/addnote.dart';
 import 'package:sqflite_0/home.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const Home(),
+      routes: {"addnotes" : (context) => AddNote()},
     );
   }
 }

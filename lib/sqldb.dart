@@ -17,13 +17,17 @@ class SqlDb{
     return mydb;
   }
   _onCreate (Database db , int version)async{
-    await db.execute('''
+    Batch batch =db.batch();
+    // await db.execute('''
+    batch.execute('''
     CREATE TABLE "Notes"(
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
     "title" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
     "note" TEXT NOT NULL 
     )
     ''');
+    await batch.commit();
     print("Create DataBase and Table ++++++++++++++++++++++");
   }
   showData(String sql)async{

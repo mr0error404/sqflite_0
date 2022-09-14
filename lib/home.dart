@@ -20,6 +20,12 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text("HomePage"),
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            Navigator.of(context).pushNamed("addnotes");
+          },
+        child: Icon(Icons.add),
+      ),
       body: Column(
         children: [
           // MaterialButton(onPressed: ()async{
@@ -36,7 +42,9 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context , i){
                     return Card(
                       child: ListTile(
-                        title: Text("${snapshot.data![i]}"),
+                        title: Text("${snapshot.data![i]['note']}"),
+                        subtitle: Text("${snapshot.data![i]['title']}"),
+                        trailing: Text("${snapshot.data![i]['color']}"),
                       ),
                     );
               });
