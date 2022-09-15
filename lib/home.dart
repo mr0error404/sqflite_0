@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite_0/sqldb.dart';
-
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
-
   @override
   State<Home> createState() => _HomeState();
 }
-
 class _HomeState extends State<Home> {
   SqlDb sqlDb = SqlDb();
-  Future<List<Map>> showData()async{
+  bool isLoading =true;
+  List notes = [];
+  // Future<List<Map>> showData()async{
+  Future showData()async{
     List<Map> response = await sqlDb.showData("SELECT * FROM Notes");
+    notes.addAll(response);
+    isLoading =false;
+    if(this.mounted){
+      setState((){});
+    }
     return response;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    showData();
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -31,26 +42,35 @@ class _HomeState extends State<Home> {
           // MaterialButton(onPressed: ()async{
           //   await sqlDb.mydeleteDatabase();
           // },child: Text("Delete Database"),),
-          FutureBuilder(
-              future: showData(),
-              builder: (BuildContext context ,AsyncSnapshot<List<Map>> snapshot) {
-            if (snapshot.hasData){
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
+          // FutureBuilder(
+          //     future: showData(),
+          //     builder: (BuildContext context ,AsyncSnapshot<List<Map>> snapshot) {
+          //   if (snapshot.hasData){
+          //     return
+                ListView.builder(
+                itemCount: notes.length,
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (context , i){
                     return Card(
                       child: ListTile(
-                        title: Text("${snapshot.data![i]['note']}"),
-                        subtitle: Text("${snapshot.data![i]['title']}"),
-                        trailing: Text("${snapshot.data![i]['color']}"),
+                        title: Text("${notes[i]['note']}"),
+                        subtitle: Text("${notes[i]['title']}"),
+                        trailing: IconButton(
+                            onPressed: ()async{
+                              int response =await sqlDb.deleteData("DELETE FROM Notes WHERE id = ${notes[i]['id']}");
+                              if(response > 0){
+                                notes.removeWhere((element) => element['id'] == notes[i]['id']);
+                                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+                                setState((){});
+                              }
+                            },
+                            icon: Icon(Icons.delete , color:  Colors.red,)),
                       ),
                     );
-              });
-            }
-            return Center(child: CircularProgressIndicator(),);
-          } ),
+              }),
+          //   return Center(child: CircularProgressIndicator(),);
+          // } ),
         ],
       ),
     );
