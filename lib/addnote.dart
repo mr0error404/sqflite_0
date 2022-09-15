@@ -53,10 +53,15 @@ class _AddNoteState extends State<AddNote> {
                     SizedBox(height: 20,),
                     MaterialButton(
                       onPressed: ()async{
-                       int response= await sqlDb.insertData('''
-                       INSERT INTO Notes ('note','title','color')
-                       VALUES ("${notes!.text}" , "${title!.text}" , "${color!.text}")
-                       ''');
+                       // int response= await sqlDb.insertData('''
+                       // INSERT INTO Notes ('note','title','color')
+                       // VALUES ("${notes!.text}" , "${title!.text}" , "${color!.text}")
+                       // ''');
+                        int response = await sqlDb.insert("Notes", {
+                          "note" : "${notes!.text}",
+                          "title" : "${title!.text}",
+                          "color" : "${color!.text}",
+                        });
                        print("response ======================= $response");
                        if (response >0 ){
                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home(),),

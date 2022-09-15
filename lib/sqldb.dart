@@ -59,4 +59,28 @@ class SqlDb{
     String path = join(databasepath , 'nots.db');
     return deleteDatabase(path);
   }
-}
+  ///////////////////////////////////////////////////////
+
+
+  show(String table)async{
+    Database? mydb = await db;
+    List<Map> response = await mydb!.query(table);
+    return response;
+  }// SELECT
+  insert(String table ,Map<String, Object> values)async{
+    Database? mydb = await db;
+    int response = await mydb!.insert(table ,values);
+    return response;
+  }// INSERT
+  update(String table , Map<String, Object?> values , String? mywhere)async{
+    Database? mydb = await db;
+    int response = await mydb!.update(table, values , where: mywhere);
+    return response;
+  }// UPDATE
+  delete(String table, String? mywhere)async{
+    Database? mydb = await db;
+    int response = await mydb!.delete(table ,  where: mywhere);
+    return response;
+  }// DELETE
+
+  }

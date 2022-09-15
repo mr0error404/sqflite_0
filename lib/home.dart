@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite_0/editnotes.dart';
 import 'package:sqflite_0/sqldb.dart';
+import 'package:sqflite_0/sql_db.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
   @override
@@ -10,15 +13,24 @@ class _HomeState extends State<Home> {
   bool isLoading =true;
   List notes = [];
   // Future<List<Map>> showData()async{
+  // Future showData()async{
+  //   List<Map> response = await sqlDb.showData("SELECT * FROM Notes");
+  //   notes.addAll(response);
+  //   isLoading =false;
+  //   if(this.mounted){
+  //     setState((){});
+  //   }
+  //   return response;
+  // }
   Future showData()async{
-    List<Map> response = await sqlDb.showData("SELECT * FROM Notes");
-    notes.addAll(response);
-    isLoading =false;
-    if(this.mounted){
-      setState((){});
+      List<Map> response = await sqlDb.show("Notes");
+      notes.addAll(response);
+      isLoading =false;
+      if(this.mounted){
+        setState((){});
+      }
+      return response;
     }
-    return response;
-  }
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +49,8 @@ class _HomeState extends State<Home> {
           },
         child: Icon(Icons.add),
       ),
-      body: Column(
+      body: isLoading == true ? Center(child: Text("Loading . . ."))
+          :Column(
         children: [
           // MaterialButton(onPressed: ()async{
           //   await sqlDb.mydeleteDatabase();
@@ -56,16 +69,46 @@ class _HomeState extends State<Home> {
                       child: ListTile(
                         title: Text("${notes[i]['note']}"),
                         subtitle: Text("${notes[i]['title']}"),
-                        trailing: IconButton(
-                            onPressed: ()async{
-                              int response =await sqlDb.deleteData("DELETE FROM Notes WHERE id = ${notes[i]['id']}");
-                              if(response > 0){
-                                notes.removeWhere((element) => element['id'] == notes[i]['id']);
-                                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Home()));
-                                setState((){});
-                              }
-                            },
-                            icon: Icon(Icons.delete , color:  Colors.red,)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                onPressed: ()async{
+                                  // int response =await sqlDb.deleteData(
+                                  //     "DELETE FROM Notes WHERE id = ${notes[i]['id']}");
+                                  int response =await sqlDb.delete(
+                                      "Notes",
+                                      "id = ${notes[i]['id']}");
+                                  if(response > 0){
+                                    notes.removeWhere((element) =>
+                                    element['id'] == notes[i]['id']);
+                                    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+                                    setState((){});
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.delete ,
+                                  color:  Colors.red,
+                                ),
+                            ),
+                            IconButton(
+                              onPressed: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => EditNote(
+                                          color:notes[i]['color'] ,
+                                          title: notes[i]['note'],
+                                          note: notes[i]['title'],
+                                          id: notes[i]['id'],
+                                )));
+                              },
+                              icon: Icon(
+                                Icons.edit ,
+                                color:  Colors.lightBlue,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
               }),
